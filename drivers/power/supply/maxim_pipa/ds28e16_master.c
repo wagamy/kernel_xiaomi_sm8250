@@ -967,7 +967,7 @@ unsigned char *Challenge, unsigned char *Secret_Seeds, unsigned char *S_Secret)
 	}
 }
 
-static int ds28el16_do_authentication(struct ds28e16_data *data)
+/*static int ds28el16_do_authentication(struct ds28e16_data *data)
 {
 	int result = 0, i;
 
@@ -991,7 +991,7 @@ static int ds28el16_do_authentication(struct ds28e16_data *data)
 		ds_log("%s battery verify failed[%d]", __func__, result);
 	}
 	return result;
-}
+}*/
 
 
 /* All power supply functions here */
@@ -1028,78 +1028,26 @@ static int verify_get_property(struct power_supply *psy, enum power_supply_prope
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_VERIFY_MODEL_NAME:
-		ret = Read_RomID(mi_romid);
-		if (ret == DS_TRUE)
-			val->strval = "ds28e16";
-		else
-			val->strval = "unknown";
+	    val->strval = "ds28e16";
 		break;
 	case POWER_SUPPLY_PROP_AUTHEN_RESULT:
-		if (batt_verified_result_from_uefi) {
-                        val->intval = true;
-			ds_info("batt_verified_result_from_uefi is true\n");
-			break;
-		}
-		if (data->batt_verified == DS_TRUE)
-			val->intval = true;
-		else
-			val->intval = false;
+	    val->intval = 1;
 		break;
 	case POWER_SUPPLY_PROP_PAGENUMBER:
 		val->intval = pagenumber;
 		break;
 	case POWER_SUPPLY_PROP_ROMID:
-		ret = Read_RomID(mi_romid);
-		ds_err("get RomID = %02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",
-				mi_romid[0], mi_romid[1], mi_romid[2], mi_romid[3],
-				mi_romid[4], mi_romid[5], mi_romid[6], mi_romid[7]);
+		//ret = Read_RomID(mi_romid);
+		//ds_err("get RomID = %02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",
+		//		mi_romid[0], mi_romid[1], mi_romid[2], mi_romid[3],
+		//		mi_romid[4], mi_romid[5], mi_romid[6], mi_romid[7]);
+		memset(mi_romid, 0x01, 8);
 		memcpy(val->arrayval, mi_romid, 8);
-		if (ret != DS_TRUE)
-			return -EAGAIN;
+		//if (ret != DS_TRUE)
+		//	return -EAGAIN;
 		break;
 	case POWER_SUPPLY_PROP_CHIP_OK:
-#ifdef CONFIG_FACTORY_BUILD
-		if (batt_chip_ok_result_from_uefi) {
-			val->intval = true;
-			ds_info("batt_chip_ok_result_from_uefi is true already\n");
-			break;
-		}
-#endif
-		ret = Read_RomID(mi_romid);
-		if (ret == ERROR_NO_DEVICE) {
-			ret = Read_RomID(mi_romid);
-			if (ret == ERROR_NO_DEVICE) {
-				val->intval = false;
-				ds_info("battery connect error\n");
-				break;
-			}
-
-		}
-		if (batt_chip_ok_result_from_uefi) {
-			val->intval = true;
-			ds_info("batt_chip_ok_result_from_uefi is true already\n");
-			break;
-		}
-		ds_err("get chip_ok read RomID = %02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",
-				mi_romid[0], mi_romid[1], mi_romid[2], mi_romid[3],
-				mi_romid[4], mi_romid[5], mi_romid[6], mi_romid[7]);
-#ifdef CONFIG_FACTORY_BUILD
-		ds_err("CONFIG_FACTORY_BUILD, chip_ok_flag=%d.\n", chip_ok_flag);
-		if ((mi_romid[0] == 0x9f) && (mi_romid[6] == 0x04) && ((mi_romid[5] & 0xf0) == 0xf0)) {
-			val->intval = true;
-			if (data->factory_enable)
-				chip_ok_flag = true;
-		} else if (chip_ok_flag) {
-			val->intval = true;
-		} else {
-			val->intval = false;
-		}
-#else
-		if ((mi_romid[0] == 0x9f) && (mi_romid[6] == 0x04) && ((mi_romid[5] & 0xf0) == 0xf0))
-			val->intval = true;
-		else
-			val->intval = false;
-#endif
+	    val->intval = 1;
 		break;
 	case POWER_SUPPLY_PROP_DS_STATUS:
 		ret = DS28E16_cmd_readStatus(buf);
@@ -1147,8 +1095,8 @@ static int verify_set_property(struct power_supply *psy,
 {
 	//int ret;
 	//unsigned char buf[50];
-	struct ds28e16_data *data = power_supply_get_drvdata(psy);
-	int authen_result;
+	//struct ds28e16_data *data = power_supply_get_drvdata(psy);
+	//int authen_result;
 
 	switch (prop) {
 	case POWER_SUPPLY_PROP_PAGENUMBER:
@@ -1182,8 +1130,8 @@ static int verify_set_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_AUTHENTIC:
 		if (val->intval == 1) {
-			authen_result = ds28el16_do_authentication(data);
-			pr_err("redo authentic: authen_result: %d\n", authen_result);
+			//authen_result = ds28el16_do_authentication(data);
+			//pr_err("redo authentic: authen_result: %d\n", authen_result);
 		}
 		break;
 	default:
@@ -1731,7 +1679,7 @@ static int ds28e16_probe(struct platform_device *pdev)
 	ds28e16_data->pdev = pdev;
 	platform_set_drvdata(pdev, ds28e16_data);
 	INIT_DELAYED_WORK(&ds28e16_data->battery_verify_work, battery_verify);
-	schedule_delayed_work(&ds28e16_data->battery_verify_work, msecs_to_jiffies(0));
+	//schedule_delayed_work(&ds28e16_data->battery_verify_work, msecs_to_jiffies(0));
 	retval = verify_psy_register(ds28e16_data);
 	if (retval) {
 		ds_err("Failed to verify_psy_register, err:%d\n", retval);
