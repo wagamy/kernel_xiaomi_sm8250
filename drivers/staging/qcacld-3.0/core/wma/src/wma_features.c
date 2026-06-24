@@ -1595,6 +1595,7 @@ static void wma_inc_wow_stats(t_wma_handle *wma,
 
 static void wma_wow_stats_display(struct wake_lock_stats *stats)
 {
+    /*
 	WMA_LOGA("WLAN wake reason counters:");
 	WMA_LOGA("uc:%d bc:%d v4_mc:%d v6_mc:%d ra:%d ns:%d na:%d "
 		 "icmp:%d icmpv6:%d",
@@ -1628,6 +1629,7 @@ static void wma_wow_stats_display(struct wake_lock_stats *stats)
 		 stats->rssi_breach_wake_up_count,
 		 stats->oem_response_wake_up_count,
 		 stats->scan_11d);
+	*/
 }
 
 static void wma_print_wow_stats(t_wma_handle *wma,
@@ -2388,7 +2390,7 @@ wma_wake_reason_ap_assoc_lost(t_wma_handle *wma, void *event, uint32_t len)
 	return 0;
 }
 
-static const char *wma_vdev_type_str(uint32_t vdev_type)
+/*static const char *wma_vdev_type_str(uint32_t vdev_type)
 {
 	switch (vdev_type) {
 	case WMI_VDEV_TYPE_AP:
@@ -2408,7 +2410,7 @@ static const char *wma_vdev_type_str(uint32_t vdev_type)
 	default:
 		return "unknown";
 	}
-}
+}*/
 
 static int wma_wake_event_packet(
 	t_wma_handle *wma,
@@ -2710,16 +2712,10 @@ static void wma_wake_event_log_reason(t_wma_handle *wma,
 	/* "Unspecified" means APPS triggered wake, else firmware triggered */
 	if (wake_info->wake_reason != WOW_REASON_UNSPECIFIED) {
 		vdev = &wma->interfaces[wake_info->vdev_id];
-		WMA_LOGA("WLAN triggered wakeup: %s (%d), vdev: %d (%s)",
-			 wma_wow_wake_reason_str(wake_info->wake_reason),
-			 wake_info->wake_reason,
-			 wake_info->vdev_id,
-			 wma_vdev_type_str(vdev->type));
+		//WMA_LOGA("WLAN triggered wakeup: %s (%d), vdev: %d (%s)", wma_wow_wake_reason_str(wake_info->wake_reason), wake_info->wake_reason, wake_info->vdev_id, wma_vdev_type_str(vdev->type));
 		wma_debug_assert_page_fault_wakeup(wake_info->wake_reason);
 	} else if (!wmi_get_runtime_pm_inprogress(wma->wmi_handle)) {
-		WMA_LOGA("Non-WLAN triggered wakeup: %s (%d)",
-			 wma_wow_wake_reason_str(wake_info->wake_reason),
-			 wake_info->wake_reason);
+		//WMA_LOGA("Non-WLAN triggered wakeup: %s (%d)", wma_wow_wake_reason_str(wake_info->wake_reason), wake_info->wake_reason);
 	}
 
 	qdf_wow_wakeup_host_event(wake_info->wake_reason);
@@ -5559,4 +5555,3 @@ int wma_get_ani_level_evt_handler(void *handle, uint8_t *event_buf,
 	return 0;
 }
 #endif
-

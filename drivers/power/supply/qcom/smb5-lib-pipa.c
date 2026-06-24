@@ -2788,7 +2788,7 @@ int smblib_get_prop_batt_status(struct smb_charger *chg,
 
 	rc = smblib_read(chg, BATTERY_CHARGER_STATUS_1_REG, &stat);
 	if (rc < 0) {
-		smblib_err(chg, "Couldn't read BATTERY_CHARGER_STATUS_1 rc=%d\n", 
+		smblib_err(chg, "Couldn't read BATTERY_CHARGER_STATUS_1 rc=%d\n",
 			rc);
 		return rc;
 	}
@@ -3822,16 +3822,14 @@ int smblib_night_charging_func(struct smb_charger *chg,
 	capacity = pval.intval;
 	rc = smblib_get_prop_battery_input_suspend(chg, &pval);
 	battery_input_suspend = pval.intval;
-	pr_info("nchg_func:capacity:%d, battery_input_suspend:%d.\n",
-			capacity, battery_input_suspend);
-	pr_info("nchg_func:pre_nchg:%d, nchg:%d.\n",
-			pre_night_chg_flag, chg->night_chg_flag);
+	//pr_info("nchg_func:capacity:%d, battery_input_suspend:%d.\n", capacity, battery_input_suspend);
+	//pr_info("nchg_func:pre_nchg:%d, nchg:%d.\n", pre_night_chg_flag, chg->night_chg_flag);
 
 	if (pre_night_chg_flag != chg->night_chg_flag) {
 		if (chg->night_chg_flag && capacity >= 80) {
 			pval.intval = 1;
 			rc = smblib_set_prop_battery_input_suspend(chg, &pval);
-			pr_err("nchg_func:opne night charging.\n");
+			//pr_err("nchg_func:opne night charging.\n");
 			pre_night_chg_flag = chg->night_chg_flag;
 		}
 	}
@@ -3840,7 +3838,7 @@ int smblib_night_charging_func(struct smb_charger *chg,
 			(!chg->night_chg_flag || capacity <= 75)) {
 		pval.intval = 0;
 		smblib_set_prop_battery_input_suspend(chg, &pval);
-		pr_err("nchg_func:close night charging.\n");
+		//pr_err("nchg_func:close night charging.\n");
 		pre_night_chg_flag = 0;
 	}
 
@@ -3884,11 +3882,11 @@ static inline void dump_reg(struct smb_charger *chg, u16 addr,
 							name, addr, reg);
 }
 
-static void dump_regs(struct smb_charger *chg)
+/*static void dump_regs(struct smb_charger *chg)
 {
 	u16 addr;
 
-	/* charger peripheral */
+	// charger peripheral
 	for (addr = 0x6; addr <= 0xE; addr++)
 		dump_reg(chg, CHGR_BASE + addr, "CHGR Status");
 
@@ -3959,7 +3957,7 @@ static void dump_regs(struct smb_charger *chg)
 		dump_reg(chg, MISC_BASE + addr, "MISC Config");
 
 	dump_reg(chg, MISC_BASE + addr, NULL);
-}
+}*/
 
 #define CHARGING_PERIOD_S		300
 #define NOT_CHARGING_PERIOD_S		1200
@@ -3972,7 +3970,7 @@ static void smblib_reg_work(struct work_struct *work)
 	int icl_settle, usb_cur_in, usb_vol_in, icl_sts;
 	int charger_type, typec_mode, typec_orientation, esr_uohms_nominal, esr_uohms_actual, resistance;
 
-	dump_regs(chg);
+	//dump_regs(chg);
 	rc = smblib_get_prop_usb_present(chg, &val);
 	if (rc < 0) {
 		pr_err("Couldn't get usb present rc=%d\n", rc);
@@ -3982,12 +3980,12 @@ static void smblib_reg_work(struct work_struct *work)
 	}
 	usb_present = val.intval;
 
-	smblib_dbg(chg, PR_OEM, "AWAKE vote value is %d voted by %s\n",
+	/*smblib_dbg(chg, PR_OEM, "AWAKE vote value is %d voted by %s\n",
 					get_effective_result(chg->awake_votable),
-					get_effective_client(chg->awake_votable));
+					get_effective_client(chg->awake_votable));*/
 
 	if (usb_present) {
-		smblib_dbg(chg, PR_OEM, "ICL vote value is %d voted by %s\n",
+	  /*smblib_dbg(chg, PR_OEM, "ICL vote value is %d voted by %s\n",
 					get_effective_result(chg->usb_icl_votable),
 					get_effective_client(chg->usb_icl_votable));
 		smblib_dbg(chg, PR_OEM, "FCC vote value is %d voted by %s\n",
@@ -3995,7 +3993,7 @@ static void smblib_reg_work(struct work_struct *work)
 					get_effective_client(chg->fcc_votable));
 		smblib_dbg(chg, PR_OEM, "FV vote value is %d voted by %s\n",
 					get_effective_result(chg->fv_votable),
-					get_effective_client(chg->fv_votable));
+					get_effective_client(chg->fv_votable));*/
 
 		power_supply_get_property(chg->usb_psy,
 					POWER_SUPPLY_PROP_INPUT_CURRENT_NOW,
@@ -4042,9 +4040,9 @@ static void smblib_reg_work(struct work_struct *work)
                                         &val);
                 esr_uohms_actual= val.intval;
 
-		smblib_dbg(chg, PR_OEM,	"ICL settle value[%d], usbin adc current[%d], vbusin adc vol[%d]\n, "
+		/*smblib_dbg(chg, PR_OEM,	"ICL settle value[%d], usbin adc current[%d], vbusin adc vol[%d]\n, "
 					"resistance [%d], esr_nominal [%d], esr_actual [%d]\n",icl_settle, usb_cur_in,
-					 usb_vol_in, resistance, esr_uohms_nominal, esr_uohms_actual);
+					 usb_vol_in, resistance, esr_uohms_nominal, esr_uohms_actual);*/
 		if (!chg->usb_main_psy) {
 			chg->usb_main_psy = power_supply_get_by_name("main");
 		}
@@ -4053,12 +4051,12 @@ static void smblib_reg_work(struct work_struct *work)
 					POWER_SUPPLY_PROP_INPUT_CURRENT_SETTLED,
 					&val);
 			icl_sts = val.intval;
-			smblib_dbg(chg, PR_OEM, "AICL_STS[%d]\n", icl_sts);
+			//smblib_dbg(chg, PR_OEM, "AICL_STS[%d]\n", icl_sts);
 		}
 
-		smblib_dbg(chg, PR_OEM,
+		/*smblib_dbg(chg, PR_OEM,
 					"Type-C orientation[%d], Type-C mode[%d], Real Charger Type[%d]\n",
-					typec_orientation, typec_mode, charger_type);
+					typec_orientation, typec_mode, charger_type);*/
 
 		schedule_delayed_work(&chg->reg_work,
 				CHARGING_PERIOD_S * HZ);

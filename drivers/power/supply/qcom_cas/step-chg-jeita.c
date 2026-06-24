@@ -1126,7 +1126,7 @@ static int handle_jeita(struct step_chg_info *chip)
 	} else {
 		vote(chip->fcc_votable, JEITA_VOTER, fcc_ua ? true : false, fcc_ua);
 	}
-	pr_info("handle_jeita: temp:%d, fcc_ua:%d\n", temp, fcc_ua);
+	//pr_info("handle_jeita: temp:%d, fcc_ua:%d\n", temp, fcc_ua);
 
 	rc = get_val(chip->jeita_fv_config->fv_cfg,
 			chip->jeita_fv_config->param.hysteresis,
@@ -1183,8 +1183,7 @@ static int handle_jeita(struct step_chg_info *chip)
 		}
 		curr_vbat_uv = pval.intval;
 
-		pr_info("handle_jeita: temp:%d, curr_vbat_uv:%d, cell_vbat_uv:%d fv_uv:%d\n",
-				temp, curr_vbat_uv, cell_vbat_uv, fv_uv);
+		//pr_info("handle_jeita: temp:%d, curr_vbat_uv:%d, cell_vbat_uv:%d fv_uv:%d\n", temp, curr_vbat_uv, cell_vbat_uv, fv_uv);
 		if ((curr_vbat_uv > fv_uv) && ((cell_vbat_uv > fv_uv)) && (temp >= chip->jeita_warm_th))
 			vote(chip->input_suspend_votable, JEITA_VOTER, true, 0);
 		else if (curr_vbat_uv < (fv_uv - JEITA_SUSPEND_HYST_UV))
@@ -1293,8 +1292,7 @@ static void jeita_taper_workfunc(struct work_struct *work)
 	else
 		target_fcc = chip->jeita_target_fcc;
 
-	pr_info("handle_jeita curr:%d, target:%d\n",
-			chip->jeita_current_fcc, chip->jeita_target_fcc);
+	//pr_info("handle_jeita curr:%d, target:%d\n", chip->jeita_current_fcc, chip->jeita_target_fcc);
 	chip->jeita_current_fcc = min((chip->jeita_current_fcc + JEITA_TAPER_STEP_MA),
 			target_fcc);
 
