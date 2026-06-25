@@ -10,10 +10,12 @@
 	} while (0)
 #define aw_dev_info(dev, format, ...) \
 	do { \
+	if (0) \
 		pr_info("[Awinic][%s]%s: " format "\n", dev_name(dev), __func__, ##__VA_ARGS__); \
 	} while (0)
 #define aw_dev_dbg(dev, format, ...) \
 	do { \
+	if (0) \
 		pr_debug("[Awinic][%s]%s: " format "\n", dev_name(dev), __func__, ##__VA_ARGS__); \
 	} while (0)
 
@@ -23,10 +25,12 @@
 		} while (0)
 #define aw_pr_info(format, ...) \
 		do { \
+		if (0) \
 			pr_info("[Awinic]%s: " format "\n", __func__, ##__VA_ARGS__); \
 		} while (0)
 #define aw_pr_dbg(format, ...) \
 		do { \
+		if (0) \
 			pr_debug("[Awinic]%s: " format "\n", __func__, ##__VA_ARGS__); \
 		} while (0)
 
